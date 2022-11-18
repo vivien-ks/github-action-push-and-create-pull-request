@@ -65,9 +65,10 @@ echo "[+] Cloning destination git repository $DESTINATION_REPOSITORY_NAME"
 # Setup git
 git config --global user.email "$USER_EMAIL"
 git config --global user.name "$USER_NAME"
+git config --global --add safe.directory '*'
 
 {
-	git clone --single-branch --depth 1  "$GIT_CMD_REPOSITORY" "$CLONE_DIR"
+	git clone --single-branch --depth 1 "$GIT_CMD_REPOSITORY" "$CLONE_DIR"
     git checkout -b "$TARGET_BRANCH"
 } || {
 	echo "::error::Could not clone the destination repository. Command:"
