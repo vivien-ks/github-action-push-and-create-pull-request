@@ -151,7 +151,7 @@ echo "[+] Set directory is safe ($CLONE_DIR)"
 git config --global --add safe.directory "$CLONE_DIR"
 
 echo "[+] List branches"
-git branch 
+git branch -a
 
 echo "[+] Checking if $TARGET_BRANCH exist"
 if [ ! -d "$TARGET_BRANCH" ]
@@ -160,6 +160,8 @@ then
     echo "[+] Creating new branch: $TARGET_BRANCH"
     git checkout -b "$TARGET_BRANCH"
     git push --set-upstream origin "$TARGET_BRANCH"
+else 
+	git checkout $TARGET_BRANCH
 fi
 
 echo "[+] Adding git commit"
@@ -179,8 +181,8 @@ echo "[+] Pushing git commit"
 # --set-upstream: sets de branch when pushing to a branch that does not exist
 git push "$GIT_CMD_REPOSITORY" --set-upstream "$TARGET_BRANCH"
 
-echo "Creating a pull request"
-gh auth login --with-token < $DEPLOY_KEY_FILE
+echo "[+] Creating a pull request"
+gh auth login -p ssh --with-token < $DEPLOY_KEY_FILE
 gh ssh-key add $DEPLOY_KEY_FILE
 # To use GitHub CLI in a GitHub Actions workflow, set the GH_TOKEN environment variable.
 gh pr create -t $TARGET_BRANCH \
