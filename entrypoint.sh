@@ -16,6 +16,7 @@ TARGET_BRANCH="${9}"
 COMMIT_MESSAGE="${10}"
 TARGET_DIRECTORY="${11}"
 BASE_BRANCH="${12}"
+PULL_REQUEST_REVIEWERS="${13}"
 
 if [ -z "$DESTINATION_REPOSITORY_USERNAME" ]
 then
@@ -25,6 +26,19 @@ fi
 if [ -z "$USER_NAME" ]
 then
 	USER_NAME="$DESTINATION_GITHUB_USERNAME"
+fi
+
+if [ $TARGET_BRANCH == "main" ] || [ $TARGET_BRANCH == "master"]
+then
+  echo "target-branch cannot be 'main' nor 'master'"
+  return -1
+fi
+
+if [ -z "$PULL_REQUEST_REVIEWERS" ]
+then
+  PULL_REQUEST_REVIEWERS_LIST=$PULL_REQUEST_REVIEWERS
+else
+  PULL_REQUEST_REVIEWERS_LIST='-r '$PULL_REQUEST_REVIEWERS
 fi
 
 # Verify that there (potentially) some access to the destination repository
@@ -69,8 +83,6 @@ git config --global --add safe.directory '*'
 
 {
 	git clone --depth 1 "$GIT_CMD_REPOSITORY" "$CLONE_DIR"
-    git checkout -b "$TARGET_BRANCH"
-    git push --set-upstream origin hello-trying
 } || {
 	echo "::error::Could not clone the destination repository. Command:"
 	echo "::error::git clone --single-branch --branch $TARGET_BRANCH $GIT_CMD_REPOSITORY $CLONE_DIR"
@@ -138,6 +150,17 @@ echo "[+] Set directory is safe ($CLONE_DIR)"
 # TODO: review before releasing it as a version
 git config --global --add safe.directory "$CLONE_DIR"
 
+echo "[+] List branches"
+git branch 
+
+echo "[+] Checking if $TARGET_BRANCH exist"
+if [ ! -d "$TARGET_BRANCH" ]
+then 
+    echo "[+] Creating new branch"
+    git checkout -b "$TARGET_BRANCH"
+    git push --set-upstream origin "$TARGET_BRANCH"
+fi
+
 echo "[+] Adding git commit"
 git add .
 
@@ -153,12 +176,12 @@ git branch
 
 echo "[+] Pushing git commit"
 # --set-upstream: sets de branch when pushing to a branch that does not exist
-# git push "$GIT_CMD_REPOSITORY" --set-upstream "$TARGET_BRANCH"
-git push "$GIT_CMD_REPOSITORY" 
+git push "$GIT_CMD_REPOSITORY" --set-upstream "$TARGET_BRANCH"
+# git push "$GIT_CMD_REPOSITORY" 
 
 echo "Creating a pull request"
 gh pr create -t $TARGET_BRANCH \
             -b $TARGET_BRANCH \
             -B $BASE_BRANCH \
             -H $TARGET_BRANCH \
-               $PULL_REQUEST_REVIEWERS
+               $PULL_REQUEST_REVIEWERS_LIST

@@ -54,6 +54,10 @@ inputs:
       to "main"
     default: main
     required: false
+  pull-request-reviewers: 
+    description: >- 
+      [Optional] set the reviewers to be added to the pull request 
+    required: false 
         
 runs:
   using: docker
@@ -71,6 +75,7 @@ runs:
     - '${{ inputs.commit-message }}'
     - '${{ inputs.target-directory }}'
     - '${{ inputs.base-branch }}'
+    - '${{ inputs.pull-request-reviewers }}'
 branding:
   icon: git-commit
   color: green
