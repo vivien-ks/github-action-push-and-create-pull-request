@@ -151,6 +151,7 @@ echo "[+] Set directory is safe ($CLONE_DIR)"
 git config --global --add safe.directory "$CLONE_DIR"
 
 echo "[+] List branches"
+git fetch --all
 git branch -a
 
 echo "[+] Checking if $TARGET_BRANCH exist"
@@ -182,7 +183,8 @@ echo "[+] Pushing git commit"
 git push "$GIT_CMD_REPOSITORY" --set-upstream "$TARGET_BRANCH"
 
 echo "[+] Creating a pull request"
-gh auth login -p ssh --with-token < $DEPLOY_KEY_FILE
+gh config set git_protocol ssh
+gh auth login --git-protocol ssh --with-token < $DEPLOY_KEY_FILE
 gh ssh-key add $DEPLOY_KEY_FILE
 # To use GitHub CLI in a GitHub Actions workflow, set the GH_TOKEN environment variable.
 gh pr create -t $TARGET_BRANCH \
