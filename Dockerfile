@@ -10,6 +10,6 @@ RUN apk add --no-cache git openssh-client
 RUN apk add coreutils
 
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
