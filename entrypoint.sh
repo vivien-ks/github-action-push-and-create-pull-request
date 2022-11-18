@@ -70,6 +70,7 @@ git config --global --add safe.directory '*'
 {
 	git clone --single-branch --depth 1 "$GIT_CMD_REPOSITORY" "$CLONE_DIR"
     git checkout -b "$TARGET_BRANCH"
+    git push 
 } || {
 	echo "::error::Could not clone the destination repository. Command:"
 	echo "::error::git clone --single-branch --branch $TARGET_BRANCH $GIT_CMD_REPOSITORY $CLONE_DIR"
@@ -109,17 +110,16 @@ ls "$SOURCE_DIRECTORY"
 echo "[+] Checking if local $SOURCE_DIRECTORY exist"
 if [ ! -d "$SOURCE_DIRECTORY" ]
 then
-    mkdir -p $CLONE_DIR/$INPUT_DESTINATION_FOLDER/
-	# echo "ERROR: $SOURCE_DIRECTORY does not exist"
-	# echo "This directory needs to exist when push-to-another-repository is executed"
-	# echo
-	# echo "In the example it is created by ./build.sh: https://github.com/cpina/push-to-another-repository-example/blob/main/.github/workflows/ci.yml#L19"
-	# echo
-	# echo "If you want to copy a directory that exist in the source repository"
-	# echo "to the target repository: you need to clone the source repository"
-	# echo "in a previous step in the same build section. For example using"
-	# echo "actions/checkout@v2. See: https://github.com/cpina/push-to-another-repository-example/blob/main/.github/workflows/ci.yml#L16"
-	# exit 1
+	echo "ERROR: $SOURCE_DIRECTORY does not exist"
+	echo "This directory needs to exist when push-to-another-repository is executed"
+	echo
+	echo "In the example it is created by ./build.sh: https://github.com/cpina/push-to-another-repository-example/blob/main/.github/workflows/ci.yml#L19"
+	echo
+	echo "If you want to copy a directory that exist in the source repository"
+	echo "to the target repository: you need to clone the source repository"
+	echo "in a previous step in the same build section. For example using"
+	echo "actions/checkout@v2. See: https://github.com/cpina/push-to-another-repository-example/blob/main/.github/workflows/ci.yml#L16"
+	exit 1
 fi
 
 echo "[+] Copying contents of source repository folder $SOURCE_DIRECTORY to folder $TARGET_DIRECTORY in git repo $DESTINATION_REPOSITORY_NAME"
