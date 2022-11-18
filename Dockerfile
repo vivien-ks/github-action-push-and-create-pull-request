@@ -7,8 +7,10 @@ RUN wget -q  https://api.github.com/repos/cli/cli/releases/latest \
     && rm -fr 
 
 RUN apk add --no-cache git openssh-client
+RUN sudo apt-get update sudo \ 
+    apt-get install coreutils
 
 COPY entrypoint.sh /entrypoint.sh
-# RUN chmod +x entrypoint.sh
+RUN chmod +x entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
