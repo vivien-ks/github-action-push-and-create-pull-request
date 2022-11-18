@@ -68,7 +68,7 @@ git config --global user.name "$USER_NAME"
 git config --global --add safe.directory '*'
 
 {
-	git clone --single-branch --depth 1 "$GIT_CMD_REPOSITORY" "$CLONE_DIR"
+	git clone --depth 1 "$GIT_CMD_REPOSITORY" "$CLONE_DIR"
     git checkout -b "$TARGET_BRANCH"
     git push --set-upstream origin hello-trying
 } || {
@@ -150,7 +150,8 @@ git diff-index --quiet HEAD || git commit --message "$COMMIT_MESSAGE"
 
 echo "[+] Pushing git commit"
 # --set-upstream: sets de branch when pushing to a branch that does not exist
-git push "$GIT_CMD_REPOSITORY" --set-upstream "$TARGET_BRANCH"
+# git push "$GIT_CMD_REPOSITORY" --set-upstream "$TARGET_BRANCH"
+git push "$GIT_CMD_REPOSITORY" "$TARGET_BRANCH"
 
 echo "Creating a pull request"
 gh pr create -t $TARGET_BRANCH \
