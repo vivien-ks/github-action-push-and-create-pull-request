@@ -70,7 +70,7 @@ git config --global --add safe.directory '*'
 {
 	git clone --single-branch --depth 1 "$GIT_CMD_REPOSITORY" "$CLONE_DIR"
     git checkout -b "$TARGET_BRANCH"
-    git push 
+    git push --set-upstream origin hello-trying
 } || {
 	echo "::error::Could not clone the destination repository. Command:"
 	echo "::error::git clone --single-branch --branch $TARGET_BRANCH $GIT_CMD_REPOSITORY $CLONE_DIR"
