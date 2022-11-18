@@ -8,6 +8,8 @@ RUN wget -q  https://api.github.com/repos/cli/cli/releases/latest \
 
 RUN apk add --no-cache git openssh-client
 RUN apk add coreutils
+# RUN set -ex && apk --no-cache add sudo
+# RUN sudo apt-get install hub
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
