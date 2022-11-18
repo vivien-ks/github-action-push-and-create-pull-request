@@ -6,25 +6,16 @@
 #     && mv gh*/bin/gh /usr/local/bin/ \
 #     && rm -fr *
 
-FROM ubuntu as builder
-WORKDIR /home/ 
-RUN apt-get update && \
-      apt-get -y install sudo
-RUN sudo apt-get -y install hub
-RUN sudo apt-get install -y coreutils
+# FROM ubuntu as builder
+# WORKDIR /home/ 
+# RUN apt-get update && \
+#       apt-get -y install sudo
+# RUN sudo apt-get -y install hub # note that hub has the openssh-client too 
+# RUN sudo apt-get install -y coreutils
 
-# FROM alpine/git
-# COPY --from=builder /home/ ./
-# RUN apk add --no-cache git openssh-client
-# RUN apk add coreutils
-
-# RUN conda install -c conda-forge hub
-
-# ENV CHOCO_URL=https://chocolatey.org/install.ps1
-# RUN Set-ExecutionPolicy Bypass -Scope Process -Force; \
-#  [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]'Tls,Tls11,Tls12'; \
-#  iex ((New-Object System.Net.WebClient).DownloadString("$env:CHOCO_URL"));
-# RUN choco install hub
+FROM alpine/git
+RUN apk add --no-cache git openssh-client
+RUN apk add coreutils
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

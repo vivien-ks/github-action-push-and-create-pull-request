@@ -184,13 +184,22 @@ echo "[+] Pushing git commit"
 git push "$GIT_CMD_REPOSITORY" --set-upstream "$TARGET_BRANCH"
 
 echo "[+] Creating a pull request"
-hub pull-request --no-edit
-				 -m "$COMMIT_MESSAGE" 
-				 -h $TARGET_BRANCH
-				 -b $BASE_BRANCH
+gh config set git_protocol ssh -h github.com
+gh auth status
+gh auth login --with-token < $DEPLOY_KEY_FILE
+# gh ssh-key add $DEPLOY_KEY_FILE
+# To use GitHub CLI in a GitHub Actions workflow, set the GH_TOKEN environment variable.
+gh pr create -t $TARGET_BRANCH \
+            -b $TARGET_BRANCH \
+            -B $BASE_BRANCH \
+            -H $TARGET_BRANCH \
+               $PULL_REQUEST_REVIEWERS_LIST
 
 
-
+# hub pull-request --no-edit
+# 				 -m "$COMMIT_MESSAGE" 
+# 				 -h $TARGET_BRANCH
+# 				 -b $BASE_BRANCH
 
 # gh config set git_protocol ssh
 # gh auth login --git-protocol ssh --with-token < $DEPLOY_KEY_FILE
