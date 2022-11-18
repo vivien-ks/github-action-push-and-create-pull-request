@@ -156,7 +156,8 @@ git branch
 echo "[+] Checking if $TARGET_BRANCH exist"
 if [ ! -d "$TARGET_BRANCH" ]
 then 
-    echo "[+] Creating new branch"
+    echo "$TARGET_BRANCH does not exist"
+    echo "[+] Creating new branch: $TARGET_BRANCH"
     git checkout -b "$TARGET_BRANCH"
     git push --set-upstream origin "$TARGET_BRANCH"
 fi
@@ -177,7 +178,6 @@ git branch
 echo "[+] Pushing git commit"
 # --set-upstream: sets de branch when pushing to a branch that does not exist
 git push "$GIT_CMD_REPOSITORY" --set-upstream "$TARGET_BRANCH"
-# git push "$GIT_CMD_REPOSITORY" 
 
 echo "Creating a pull request"
 gh pr create -t $TARGET_BRANCH \
