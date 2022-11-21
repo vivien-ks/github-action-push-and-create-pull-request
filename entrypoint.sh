@@ -191,9 +191,13 @@ echo "[+] Creating a pull request"
 # Not Found
 # github.com username: github.com password for  (never stored): 
 
-gh config set git_protocol ssh --host github.com
-gh repo deploy-key add $DEPLOY_KEY_FILE
-gh repo clone $GIT_CMD_REPOSITORY
+gh config set git_protocol ssh 
+export GITHUB_TOKEN=$API_TOKEN_GITHUB
+git config --global user.email "$USER_EMAIL"
+git config --global user.name "$USER_NAME"
+git clone "https://$API_TOKEN_GITHUB@github.com/$DESTINATION_GITHUB_USERNAME/$DESTINATION_REPOSITORY_NAME.git" "$CLONE_DIR2"
+git checkout -b "$TARGET_BRANCH"
+
 # gh repo clone https://github.com/vivien-ks/repoB.git #(git@github.com:vivien-ks/repoB.git) # need to change this to a variable if it works 
 # gh repo clone vivien-ks/repoB #404 - this happens because its authroized and github does not want to leak secret information 
 gh pr create --title $TARGET_BRANCH \
