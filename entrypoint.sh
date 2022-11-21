@@ -192,21 +192,23 @@ echo "[+] Creating a pull request"
 # github.com username: github.com password for  (never stored): 
 
 gh config set git_protocol ssh 
-export GITHUB_TOKEN=$API_TOKEN_GITHUB
-git config --global user.email "$USER_EMAIL"
-git config --global user.name "$USER_NAME"
+gh pr create --fill
 
-CLONE_DIR2=$(mktemp -d)
-git clone "https://$API_TOKEN_GITHUB@github.com/$DESTINATION_GITHUB_USERNAME/$DESTINATION_REPOSITORY_NAME.git" "$CLONE_DIR2"
-git checkout -b "$TARGET_BRANCH"
+# export GITHUB_TOKEN=$API_TOKEN_GITHUB
+# git config --global user.email "$USER_EMAIL"
+# git config --global user.name "$USER_NAME"
+
+# CLONE_DIR2=$(mktemp -d)
+# git clone "https://$API_TOKEN_GITHUB@github.com/$DESTINATION_GITHUB_USERNAME/$DESTINATION_REPOSITORY_NAME.git" "$CLONE_DIR2"
+# git checkout -b "$TARGET_BRANCH"
 
 # gh repo clone https://github.com/vivien-ks/repoB.git #(git@github.com:vivien-ks/repoB.git) # need to change this to a variable if it works 
 # gh repo clone vivien-ks/repoB #404 - this happens because its authroized and github does not want to leak secret information 
-gh pr create --title $TARGET_BRANCH \
-            --body $TARGET_BRANCH \
-            --base $BASE_BRANCH \
-            --head $TARGET_BRANCH \
-               $PULL_REQUEST_REVIEWERS_LIST
+# gh pr create --title $TARGET_BRANCH \
+#             --body $TARGET_BRANCH \
+#             --base $BASE_BRANCH \
+#             --head $TARGET_BRANCH \
+#                $PULL_REQUEST_REVIEWERS_LIST
 
 
 # hub pull-request --no-edit
