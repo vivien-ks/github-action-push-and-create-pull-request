@@ -191,7 +191,7 @@ echo "[+] Creating a pull request"
 # Not Found
 # github.com username: github.com password for  (never stored): 
 
-git repo clone https://github.com/vivien-ks/repoB.git # need to change this to a variable if it works 
+gh repo clone https://github.com/vivien-ks/repoB.git # need to change this to a variable if it works 
 gh pr create --title $TARGET_BRANCH \
             --body $TARGET_BRANCH \
             --base $BASE_BRANCH \
