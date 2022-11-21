@@ -82,14 +82,14 @@ git config --global user.name "$USER_NAME"
 git config --global --add safe.directory '*'
 
 {
-	git clone --depth 1 "$GIT_CMD_REPOSITORY" "$CLONE_DIR"
+	# git clone --depth 1 "$GIT_CMD_REPOSITORY" "$CLONE_DIR"
+	git clone --no-single-branch "$GIT_CMD_REPOSITORY" "$CLONE_DIR"
 } || {
 	echo "::error::Could not clone the destination repository. Command:"
 	echo "::error::git clone --single-branch --branch $TARGET_BRANCH $GIT_CMD_REPOSITORY $CLONE_DIR"
 	echo "::error::(Note that if they exist USER_NAME and API_TOKEN is redacted by GitHub)"
 	echo "::error::Please verify that the target repository exist AND that it contains the destination branch name, and is accesible by the API_TOKEN_GITHUB OR SSH_DEPLOY_KEY"
 	exit 1
-
 }
 ls -la "$CLONE_DIR"
 
@@ -193,8 +193,9 @@ echo "[+] Creating a pull request"
 
 gh config set git_protocol ssh --host github.com
 gh repo deploy-key add $DEPLOY_KEY_FILE
-# gh repo clone https://github.com/vivien-ks/repoB.git # need to change this to a variable if it works 
-gh repo clone git@github.com:vivien-ks/repoB.git
+gh repo clone $GIT_CMD_REPOSITORY
+# gh repo clone https://github.com/vivien-ks/repoB.git #(git@github.com:vivien-ks/repoB.git) # need to change this to a variable if it works 
+# gh repo clone vivien-ks/repoB #404 - this happens because its authroized and github does not want to leak secret information 
 gh pr create --title $TARGET_BRANCH \
             --body $TARGET_BRANCH \
             --base $BASE_BRANCH \
