@@ -184,13 +184,14 @@ echo "[+] Pushing git commit"
 git push "$GIT_CMD_REPOSITORY" --set-upstream "$TARGET_BRANCH"
 
 echo "[+] Creating a pull request"
-gh config set prompt disabled
-gh config set git_protocol ssh --host github.com
-gh ssh-key add $DEPLOY_KEY_FILE
-# gh config set git_protocol ssh -h $GIT_CMD_REPOSITORY
-# gh auth status
-# gh auth login --with-token < $DEPLOY_KEY_FILE
-# To use GitHub CLI in a GitHub Actions workflow, set the GH_TOKEN environment variable.
+# gh config set prompt disabled
+# gh config set git_protocol ssh --host github.com
+# gh ssh-key add $DEPLOY_KEY_FILE
+# Error creating pull request: Not Found (HTTP 404)
+# Not Found
+# github.com username: github.com password for  (never stored): 
+
+git repo clone https://github.com/vivien-ks/repoB.git # need to change this to a variable if it works 
 gh pr create --title $TARGET_BRANCH \
             --body $TARGET_BRANCH \
             --base $BASE_BRANCH \
