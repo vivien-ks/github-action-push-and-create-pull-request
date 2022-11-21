@@ -69,8 +69,7 @@ else
 	exit 1
 fi
 
-
-CLONE_DIR=$(mktemp -d)
+CLONE_DIR_PUSH=$(mktemp -d)
 
 echo "[+] Git version"
 git --version
@@ -82,25 +81,24 @@ git config --global user.name "$USER_NAME"
 git config --global --add safe.directory '*'
 
 {
-	# git clone --depth 1 "$GIT_CMD_REPOSITORY" "$CLONE_DIR"
-	git clone --no-single-branch "$GIT_CMD_REPOSITORY" "$CLONE_DIR"
+	git clone "$GIT_CMD_REPOSITORY" "$CLONE_DIR_PUSH"
 } || {
 	echo "::error::Could not clone the destination repository. Command:"
-	echo "::error::git clone --single-branch --branch $TARGET_BRANCH $GIT_CMD_REPOSITORY $CLONE_DIR"
+	echo "::error::git clone "$GIT_CMD_REPOSITORY" "$CLONE_DIR_PUSH""
 	echo "::error::(Note that if they exist USER_NAME and API_TOKEN is redacted by GitHub)"
-	echo "::error::Please verify that the target repository exist AND that it contains the destination branch name, and is accesible by the API_TOKEN_GITHUB OR SSH_DEPLOY_KEY"
+	echo "::error::Please verify that the target repository exist and is accesible by the API_TOKEN_GITHUB OR SSH_DEPLOY_KEY"
 	exit 1
 }
-ls -la "$CLONE_DIR"
+ls -la "$CLONE_DIR_PUSH"
 
 TEMP_DIR=$(mktemp -d)
 # This mv has been the easier way to be able to remove files that were there
-# but not anymore. Otherwise we had to remove the files from "$CLONE_DIR",
+# but not anymore. Otherwise we had to remove the files from "$CLONE_DIR_PUSH",
 # including "." and with the exception of ".git/"
-mv "$CLONE_DIR/.git" "$TEMP_DIR/.git"
+mv "$CLONE_DIR_PUSH/.git" "$TEMP_DIR/.git"
 
 # $TARGET_DIRECTORY is '' by default
-ABSOLUTE_TARGET_DIRECTORY="$CLONE_DIR/$TARGET_DIRECTORY/"
+ABSOLUTE_TARGET_DIRECTORY="$CLONE_DIR_PUSH/$TARGET_DIRECTORY/"
 
 echo "[+] Deleting $ABSOLUTE_TARGET_DIRECTORY"
 rm -rf "$ABSOLUTE_TARGET_DIRECTORY"
@@ -114,7 +112,7 @@ ls -al
 echo "[+] Listing root Location"
 ls -al /
 
-mv "$TEMP_DIR/.git" "$CLONE_DIR/.git"
+mv "$TEMP_DIR/.git" "$CLONE_DIR_PUSH/.git"
 
 echo "[+] List contents of $SOURCE_DIRECTORY"
 ls "$SOURCE_DIRECTORY"
@@ -125,18 +123,12 @@ then
 	echo "ERROR: $SOURCE_DIRECTORY does not exist"
 	echo "This directory needs to exist when push-to-another-repository is executed"
 	echo
-	echo "In the example it is created by ./build.sh: https://github.com/cpina/push-to-another-repository-example/blob/main/.github/workflows/ci.yml#L19"
-	echo
-	echo "If you want to copy a directory that exist in the source repository"
-	echo "to the target repository: you need to clone the source repository"
-	echo "in a previous step in the same build section. For example using"
-	echo "actions/checkout@v2. See: https://github.com/cpina/push-to-another-repository-example/blob/main/.github/workflows/ci.yml#L16"
 	exit 1
 fi
 
 echo "[+] Copying contents of source repository folder $SOURCE_DIRECTORY to folder $TARGET_DIRECTORY in git repo $DESTINATION_REPOSITORY_NAME"
-cp -ra "$SOURCE_DIRECTORY"/. "$CLONE_DIR/$TARGET_DIRECTORY"
-cd "$CLONE_DIR"
+cp -ra "$SOURCE_DIRECTORY"/. "$CLONE_DIR_PUSH/$TARGET_DIRECTORY"
+cd "$CLONE_DIR_PUSH"
 
 echo "[+] Files that will be pushed"
 ls -la
@@ -146,10 +138,10 @@ ORIGIN_COMMIT="https://$GITHUB_SERVER/$GITHUB_REPOSITORY/commit/$GITHUB_SHA"
 # COMMIT_MESSAGE="${COMMIT_MESSAGE/\$GITHUB_REF/$GITHUB_REF}"
 COMMIT_MESSAGE="hello"
 
-echo "[+] Set directory is safe ($CLONE_DIR)"
+echo "[+] Set directory is safe ($CLONE_DIR_PUSH)"
 # Related to https://github.com/cpina/github-action-push-to-another-repository/issues/64 and https://github.com/cpina/github-action-push-to-another-repository/issues/64
 # TODO: review before releasing it as a version
-git config --global --add safe.directory "$CLONE_DIR"
+git config --global --add safe.directory "$CLONE_DIR_PUSH"
 
 echo "[+] List branches"
 git pull --all
@@ -184,8 +176,20 @@ echo "[+] Pushing git commit"
 git push "$GIT_CMD_REPOSITORY" --set-upstream "$TARGET_BRANCH"
 
 echo "[+] Creating a pull request"
+CLONE_DIR_PR=$(mktemp -d)
 
+export GITHUB_TOKEN=$GITHUB_TOKEN
+git config --global user.email "$USER_EMAIL"
+git config --global user.name "$USER_NAME"
 
+git clone --branch $TARGET_BRANCH "https://$GITHUB_TOKEN@github.com/$DESTINATION_REPOSITORY_USERNAME/$DESTINATION_REPOSITORY_NAME.git" "$CLONE_DIR_PR"
+cd "$CLONE_DIR_PR"
+
+gh pr create --title $TARGET_BRANCH \
+            --body $TARGET_BRANCH \
+            --base $BASE_BRANCH \
+            --head $TARGET_BRANCH \
+               $PULL_REQUEST_REVIEWERS_LIST
 
 
 
@@ -203,8 +207,8 @@ echo "[+] Creating a pull request"
 # git config --global user.email "$USER_EMAIL"
 # git config --global user.name "$USER_NAME"
 
-# CLONE_DIR2=$(mktemp -d)
-# git clone "https://$API_TOKEN_GITHUB@github.com/$DESTINATION_GITHUB_USERNAME/$DESTINATION_REPOSITORY_NAME.git" "$CLONE_DIR2"
+# CLONE_DIR_PUSH2=$(mktemp -d)
+# git clone "https://$API_TOKEN_GITHUB@github.com/$DESTINATION_GITHUB_USERNAME/$DESTINATION_REPOSITORY_NAME.git" "$CLONE_DIR_PUSH2"
 # git checkout -b "$TARGET_BRANCH"
 
 # gh repo clone https://github.com/vivien-ks/repoB.git #(git@github.com:vivien-ks/repoB.git) # need to change this to a variable if it works 
