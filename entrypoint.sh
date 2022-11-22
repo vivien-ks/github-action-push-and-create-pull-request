@@ -149,15 +149,18 @@ git pull --all
 git branch -a
 
 echo "[+] Checking if $TARGET_BRANCH exist"
-if git checkout $TARGET_BRANCH
+if git checkout -b $TARGET_BRANCH
 then 
-	git checkout $TARGET_BRANCH
+	echo "$TARGET_BRANCH exist"
+	WORKING_BRANCH = "$TARGET_BRANCH-2" 
 else 
 	echo " - $TARGET_BRANCH does not exist"
-    echo "[+] Creating new branch: $TARGET_BRANCH"
-    git checkout -b "$TARGET_BRANCH"
-    git push --set-upstream origin "$TARGET_BRANCH"
+    WORKING_BRANCH = $TARGET_BRANCH
 fi
+
+echo "[+] Creating new branch: $WORKING_BRANCH"
+git checkout -b "$WORKING_BRANCH"
+git push --set-upstream origin "$WORKING_BRANCH"
 
 echo "[+] Adding git commit"
 git add .
@@ -174,7 +177,7 @@ git branch
 
 echo "[+] Pushing git commit"
 # --set-upstream: sets de branch when pushing to a branch that does not exist
-git push "$GIT_CMD_REPOSITORY" --set-upstream "$TARGET_BRANCH"
+git push "$GIT_CMD_REPOSITORY" --set-upstream "$WORKING_BRANCH"
 
 echo "[+] Creating a pull request"
 # CLONE_DIR_PR=$(mktemp -d)
@@ -186,12 +189,12 @@ echo "[+] Creating a pull request"
 # git clone --branch $TARGET_BRANCH "https://$GITHUB_TOKEN@github.com/$DESTINATION_REPOSITORY_USERNAME/$DESTINATION_REPOSITORY_NAME.git" "$CLONE_DIR_PR"
 # cd "$CLONE_DIR_PR"
 
-PR_TITLE = "PR for $TARGET_BRANCH"
+PR_TITLE = "PR for $WORKING_BRANCH"
 
 gh pr create --title $PR_TITLE \
             --body $COMMIT_MESSAGE \
             --base $BASE_BRANCH \
-            --head $TARGET_BRANCH 
+            --head $WORKING_BRANCH 
             #    $PULL_REQUEST_REVIEWERS_LIST
 
 
