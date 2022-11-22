@@ -170,7 +170,7 @@ echo "[+] Creating a pull request"
 PR_TITLE="PR-for-$WORKING_BRANCH"
 
 gh pr create --title $PR_TITLE \
-            --body $COMMIT_MESSAGE \
+            --body "$COMMIT_MESSAGE" \
             --base $BASE_BRANCH \
             --head $WORKING_BRANCH 
             #    $PULL_REQUEST_REVIEWERS_LIST
