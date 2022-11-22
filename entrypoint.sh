@@ -1,23 +1,22 @@
 #!/bin/sh -l
+# Inspired by https://github.com/cpina/github-action-push-to-another-repository
 
 set -e  # if a command fails it stops the execution
 set -u  # script fails if trying to access to an undefined variable
 set -x
 
 echo "[+] Action start"
-SOURCE_BEFORE_DIRECTORY="${1}"
-SOURCE_DIRECTORY="${2}"
-DESTINATION_GITHUB_USERNAME="${3}"
-DESTINATION_REPOSITORY_NAME="${4}"
-GITHUB_SERVER="${5}"
-USER_EMAIL="${6}"
-USER_NAME="${7}"
-DESTINATION_REPOSITORY_USERNAME="${8}"
-TARGET_BRANCH="${9}"
-COMMIT_MESSAGE="${10}"
-TARGET_DIRECTORY="${11}"
-BASE_BRANCH="${12}"
-PULL_REQUEST_REVIEWERS="${13}"
+SOURCE_DIRECTORY="${1}"
+DESTINATION_GITHUB_USERNAME="${2}"
+DESTINATION_REPOSITORY_NAME="${3}"
+GITHUB_SERVER="${4}"
+USER_EMAIL="${5}"
+USER_NAME="${6}"
+DESTINATION_REPOSITORY_USERNAME="${7}"
+TARGET_BRANCH="${8}"
+COMMIT_MESSAGE="${9}"
+TARGET_DIRECTORY="${10}"
+BASE_BRANCH="${11}"
 
 if [ -z "$DESTINATION_REPOSITORY_USERNAME" ]
 then
@@ -34,13 +33,6 @@ then
   echo "target-branch cannot be 'main' nor 'master'"
   return -1
 fi
-
-# if [ -z "$PULL_REQUEST_REVIEWERS" ]
-# then
-#   PULL_REQUEST_REVIEWERS_LIST=$PULL_REQUEST_REVIEWERS
-# else
-#   PULL_REQUEST_REVIEWERS_LIST='-r '$PULL_REQUEST_REVIEWERS
-# fi
 
 # Verify that there (potentially) some access to the destination repository
 # and set up git (with GIT_CMD variable) and GIT_CMD_REPOSITORY
@@ -93,9 +85,7 @@ git config --global --add safe.directory '*'
 ls -la "$CLONE_DIR_PUSH"
 
 TEMP_DIR=$(mktemp -d)
-# This mv has been the easier way to be able to remove files that were there
-# but not anymore. Otherwise we had to remove the files from "$CLONE_DIR_PUSH",
-# including "." and with the exception of ".git/"
+
 mv "$CLONE_DIR_PUSH/.git" "$TEMP_DIR/.git"
 
 # $TARGET_DIRECTORY is '' by default
@@ -139,8 +129,6 @@ COMMIT_MESSAGE="${COMMIT_MESSAGE/ORIGIN_COMMIT/$ORIGIN_COMMIT}"
 COMMIT_MESSAGE="${COMMIT_MESSAGE/\$GITHUB_REF/$GITHUB_REF}"
 
 echo "[+] Set directory is safe ($CLONE_DIR_PUSH)"
-# Related to https://github.com/cpina/github-action-push-to-another-repository/issues/64 and https://github.com/cpina/github-action-push-to-another-repository/issues/64
-# TODO: review before releasing it as a version
 git config --global --add safe.directory "$CLONE_DIR_PUSH"
 
 echo "[+] List branches"
@@ -179,15 +167,6 @@ echo "[+] Pushing git commit"
 git push "$GIT_CMD_REPOSITORY" --set-upstream "$WORKING_BRANCH"
 
 echo "[+] Creating a pull request"
-# CLONE_DIR_PR=$(mktemp -d)
-
-# export GITHUB_TOKEN=$GH_ACCESS_TOKEN
-# git config --global user.email "$USER_EMAIL"
-# git config --global user.name "$USER_NAME"
-
-# git clone --branch $TARGET_BRANCH "https://$GITHUB_TOKEN@github.com/$DESTINATION_REPOSITORY_USERNAME/$DESTINATION_REPOSITORY_NAME.git" "$CLONE_DIR_PR"
-# cd "$CLONE_DIR_PR"
-
 PR_TITLE="PR-for-$WORKING_BRANCH"
 
 gh pr create --title $PR_TITLE \
@@ -195,47 +174,3 @@ gh pr create --title $PR_TITLE \
             --base $BASE_BRANCH \
             --head $WORKING_BRANCH 
             #    $PULL_REQUEST_REVIEWERS_LIST
-
-
-
-# gh config set prompt disabled
-# gh config set git_protocol ssh --host github.com
-# gh ssh-key add $DEPLOY_KEY_FILE
-# Error creating pull request: Not Found (HTTP 404)
-# Not Found
-# github.com username: github.com password for  (never stored): 
-
-# gh config set git_protocol ssh 
-# gh pr create --fill
-
-# export GITHUB_TOKEN=$API_TOKEN_GITHUB
-# git config --global user.email "$USER_EMAIL"
-# git config --global user.name "$USER_NAME"
-
-# CLONE_DIR_PUSH2=$(mktemp -d)
-# git clone "https://$API_TOKEN_GITHUB@github.com/$DESTINATION_GITHUB_USERNAME/$DESTINATION_REPOSITORY_NAME.git" "$CLONE_DIR_PUSH2"
-# git checkout -b "$TARGET_BRANCH"
-
-# gh repo clone https://github.com/vivien-ks/repoB.git #(git@github.com:vivien-ks/repoB.git) # need to change this to a variable if it works 
-# gh repo clone vivien-ks/repoB #404 - this happens because its authroized and github does not want to leak secret information 
-# gh pr create --title $TARGET_BRANCH \
-#             --body $TARGET_BRANCH \
-#             --base $BASE_BRANCH \
-#             --head $TARGET_BRANCH \
-#                $PULL_REQUEST_REVIEWERS_LIST
-
-
-# hub pull-request --no-edit
-# 				 -m "$COMMIT_MESSAGE" 
-# 				 -h $TARGET_BRANCH
-# 				 -b $BASE_BRANCH
-
-# gh config set git_protocol ssh
-# gh auth login --git-protocol ssh --with-token < $DEPLOY_KEY_FILE
-# gh ssh-key add $DEPLOY_KEY_FILE
-# # To use GitHub CLI in a GitHub Actions workflow, set the GH_TOKEN environment variable.
-# gh pr create -t $TARGET_BRANCH \
-#             -b $TARGET_BRANCH \
-#             -B $BASE_BRANCH \
-#             -H $TARGET_BRANCH \
-#                $PULL_REQUEST_REVIEWERS_LIST

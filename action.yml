@@ -3,9 +3,6 @@ description: >-
   Useful to push files to another repository to be used, for example, via github
   pages
 inputs:
-  source-before-directory:
-    description: Source before directory from the origin directory
-    required: false
   source-directory:
     description: Source directory from the origin directory
     required: true
@@ -34,10 +31,8 @@ inputs:
     default: ''
   target-branch:
     description: >-
-      [Optional] set target branch name for the destination repository. Defaults
-      to "main"
-    default: main
-    required: false
+      Set target branch name for the destination repository. Cannot be 'main'
+    required: true
   commit-message:
     description: >-
       [Optional] commit message for the output repository. ORIGIN_COMMIT is
@@ -54,16 +49,11 @@ inputs:
       to "main"
     default: main
     required: false
-  pull-request-reviewers: 
-    description: >- 
-      [Optional] set the reviewers to be added to the pull request 
-    required: false 
         
 runs:
   using: docker
   image: Dockerfile
   args:
-    - '${{ inputs.source-before-directory }}'
     - '${{ inputs.source-directory }}'
     - '${{ inputs.destination-github-username }}'
     - '${{ inputs.destination-repository-name }}'
@@ -75,7 +65,6 @@ runs:
     - '${{ inputs.commit-message }}'
     - '${{ inputs.target-directory }}'
     - '${{ inputs.base-branch }}'
-    - '${{ inputs.pull-request-reviewers }}'
 branding:
   icon: git-commit
   color: green
