@@ -152,10 +152,10 @@ echo "[+] Checking if $TARGET_BRANCH exist"
 if git checkout -b $TARGET_BRANCH
 then 
 	echo "$TARGET_BRANCH exist"
-	WORKING_BRANCH = "$TARGET_BRANCH-2" 
+	WORKING_BRANCH="$TARGET_BRANCH-2" 
 else 
 	echo " - $TARGET_BRANCH does not exist"
-    WORKING_BRANCH = $TARGET_BRANCH
+    WORKING_BRANCH=$TARGET_BRANCH
 fi
 
 echo "[+] Creating new branch: $WORKING_BRANCH"
