@@ -179,7 +179,7 @@ git push "$GIT_CMD_REPOSITORY" --set-upstream "$TARGET_BRANCH"
 echo "[+] Creating a pull request"
 CLONE_DIR_PR=$(mktemp -d)
 
-export GITHUB_TOKEN=$GH_TOKEN
+export GITHUB_TOKEN=$GH_ACCESS_TOKEN
 git config --global user.email "$USER_EMAIL"
 git config --global user.name "$USER_NAME"
 
