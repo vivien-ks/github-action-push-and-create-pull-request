@@ -14,7 +14,6 @@ USER_EMAIL="${6}"
 USER_NAME="${7}"
 DESTINATION_REPOSITORY_USERNAME="${8}"
 TARGET_BRANCH="${9}"
-# TARGET_BRANCH="$(git branch -a --merged master | awk '/remote/ {gsub("(remotes|origin)/",""); print; exit}')"
 COMMIT_MESSAGE="${10}"
 TARGET_DIRECTORY="${11}"
 BASE_BRANCH="${12}"
@@ -136,8 +135,8 @@ echo "[+] Files that will be pushed"
 ls -la
 
 ORIGIN_COMMIT="https://$GITHUB_SERVER/$GITHUB_REPOSITORY/commit/$GITHUB_SHA"
-# COMMIT_MESSAGE="${COMMIT_MESSAGE/ORIGIN_COMMIT/$ORIGIN_COMMIT}"
-# COMMIT_MESSAGE="${COMMIT_MESSAGE/\$GITHUB_REF/$GITHUB_REF}"
+COMMIT_MESSAGE="${COMMIT_MESSAGE/ORIGIN_COMMIT/$ORIGIN_COMMIT}"
+COMMIT_MESSAGE="${COMMIT_MESSAGE/\$GITHUB_REF/$GITHUB_REF}"
 COMMIT_MESSAGE="hello"
 
 echo "[+] Set directory is safe ($CLONE_DIR_PUSH)"
@@ -150,14 +149,14 @@ git pull --all
 git branch -a
 
 echo "[+] Checking if $TARGET_BRANCH exist"
-if [ ! -d "$TARGET_BRANCH" ]
+if git checkout $TARGET_BRANCH
 then 
-    echo " - $TARGET_BRANCH does not exist"
+	git checkout $TARGET_BRANCH
+else 
+	echo " - $TARGET_BRANCH does not exist"
     echo "[+] Creating new branch: $TARGET_BRANCH"
     git checkout -b "$TARGET_BRANCH"
     git push --set-upstream origin "$TARGET_BRANCH"
-else 
-	git checkout $TARGET_BRANCH
 fi
 
 echo "[+] Adding git commit"
@@ -187,8 +186,10 @@ echo "[+] Creating a pull request"
 # git clone --branch $TARGET_BRANCH "https://$GITHUB_TOKEN@github.com/$DESTINATION_REPOSITORY_USERNAME/$DESTINATION_REPOSITORY_NAME.git" "$CLONE_DIR_PR"
 # cd "$CLONE_DIR_PR"
 
-gh pr create --title $TARGET_BRANCH \
-            --body $TARGET_BRANCH \
+PR_TITLE = "PR for $TARGET_BRANCH"
+
+gh pr create --title $PR_TITLE \
+            --body $COMMIT_MESSAGE \
             --base $BASE_BRANCH \
             --head $TARGET_BRANCH 
             #    $PULL_REQUEST_REVIEWERS_LIST
