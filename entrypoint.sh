@@ -13,6 +13,7 @@ USER_EMAIL="${6}"
 USER_NAME="${7}"
 DESTINATION_REPOSITORY_USERNAME="${8}"
 TARGET_BRANCH="${9}"
+# TARGET_BRANCH="$(git branch -a --merged master | awk '/remote/ {gsub("(remotes|origin)/",""); print; exit}')"
 COMMIT_MESSAGE="${10}"
 TARGET_DIRECTORY="${11}"
 BASE_BRANCH="${12}"
@@ -176,14 +177,14 @@ echo "[+] Pushing git commit"
 git push "$GIT_CMD_REPOSITORY" --set-upstream "$TARGET_BRANCH"
 
 echo "[+] Creating a pull request"
-# CLONE_DIR_PR=$(mktemp -d)
+CLONE_DIR_PR=$(mktemp -d)
 
-# export GITHUB_TOKEN=$GH_TOKEN
-# git config --global user.email "$USER_EMAIL"
-# git config --global user.name "$USER_NAME"
+export GITHUB_TOKEN=$GH_TOKEN
+git config --global user.email "$USER_EMAIL"
+git config --global user.name "$USER_NAME"
 
-# git clone --branch $TARGET_BRANCH "https://$GITHUB_TOKEN@github.com/$DESTINATION_REPOSITORY_USERNAME/$DESTINATION_REPOSITORY_NAME.git" "$CLONE_DIR_PR"
-# cd "$CLONE_DIR_PR"
+git clone --branch $TARGET_BRANCH "https://$GITHUB_TOKEN@github.com/$DESTINATION_REPOSITORY_USERNAME/$DESTINATION_REPOSITORY_NAME.git" "$CLONE_DIR_PR"
+cd "$CLONE_DIR_PR"
 
 gh pr create --title $TARGET_BRANCH \
             --body $TARGET_BRANCH \
