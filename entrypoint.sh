@@ -189,7 +189,7 @@ echo "[+] Creating a pull request"
 # git clone --branch $TARGET_BRANCH "https://$GITHUB_TOKEN@github.com/$DESTINATION_REPOSITORY_USERNAME/$DESTINATION_REPOSITORY_NAME.git" "$CLONE_DIR_PR"
 # cd "$CLONE_DIR_PR"
 
-PR_TITLE = "PR for $WORKING_BRANCH"
+PR_TITLE="PR for $WORKING_BRANCH"
 
 gh pr create --title $PR_TITLE \
             --body $COMMIT_MESSAGE \
