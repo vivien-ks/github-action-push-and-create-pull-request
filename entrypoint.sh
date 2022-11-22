@@ -36,12 +36,12 @@ then
   return -1
 fi
 
-if [ -z "$PULL_REQUEST_REVIEWERS" ]
-then
-  PULL_REQUEST_REVIEWERS_LIST=$PULL_REQUEST_REVIEWERS
-else
-  PULL_REQUEST_REVIEWERS_LIST='-r '$PULL_REQUEST_REVIEWERS
-fi
+# if [ -z "$PULL_REQUEST_REVIEWERS" ]
+# then
+#   PULL_REQUEST_REVIEWERS_LIST=$PULL_REQUEST_REVIEWERS
+# else
+#   PULL_REQUEST_REVIEWERS_LIST='-r '$PULL_REQUEST_REVIEWERS
+# fi
 
 # Verify that there (potentially) some access to the destination repository
 # and set up git (with GIT_CMD variable) and GIT_CMD_REPOSITORY
@@ -190,8 +190,8 @@ echo "[+] Creating a pull request"
 gh pr create --title $TARGET_BRANCH \
             --body $TARGET_BRANCH \
             --base $BASE_BRANCH \
-            --head $TARGET_BRANCH \
-               $PULL_REQUEST_REVIEWERS_LIST
+            --head $TARGET_BRANCH 
+            #    $PULL_REQUEST_REVIEWERS_LIST
 
 
 
