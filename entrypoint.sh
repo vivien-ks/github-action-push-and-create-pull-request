@@ -53,12 +53,12 @@ then
 
 	GIT_CMD_REPOSITORY="git@$GITHUB_SERVER:$DESTINATION_REPOSITORY_USERNAME/$DESTINATION_REPOSITORY_NAME.git"
 
-elif [ -n "${API_TOKEN_GITHUB:=}" ]
+elif [ -n "${GH_TOKEN:=}" ]
 then
-	echo "[+] Using API_TOKEN_GITHUB"
-	GIT_CMD_REPOSITORY="https://$DESTINATION_REPOSITORY_USERNAME:$API_TOKEN_GITHUB@$GITHUB_SERVER/$DESTINATION_REPOSITORY_USERNAME/$DESTINATION_REPOSITORY_NAME.git"
+	echo "[+] Using GH_TOKEN"
+	GIT_CMD_REPOSITORY="https://$DESTINATION_REPOSITORY_USERNAME:$GH_TOKEN@$GITHUB_SERVER/$DESTINATION_REPOSITORY_USERNAME/$DESTINATION_REPOSITORY_NAME.git"
 else
-	echo "::error::API_TOKEN_GITHUB and SSH_DEPLOY_KEY are empty. Please fill one (recommended the SSH_DEPLOY_KEY)"
+	echo "::error::GH_TOKEN and SSH_DEPLOY_KEY are empty. Please fill one (recommended the SSH_DEPLOY_KEY)"
 	exit 1
 fi
 
@@ -79,7 +79,7 @@ git config --global --add safe.directory '*'
 	echo "::error::Could not clone the destination repository. Command:"
 	echo "::error::git clone "$GIT_CMD_REPOSITORY" "$CLONE_DIR_PUSH""
 	echo "::error::(Note that if they exist USER_NAME and API_TOKEN is redacted by GitHub)"
-	echo "::error::Please verify that the target repository exist and is accesible by the API_TOKEN_GITHUB OR SSH_DEPLOY_KEY"
+	echo "::error::Please verify that the target repository exist and is accesible by the GH_TOKEN OR SSH_DEPLOY_KEY"
 	exit 1
 }
 ls -la "$CLONE_DIR_PUSH"
