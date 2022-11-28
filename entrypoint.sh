@@ -136,7 +136,7 @@ git pull --all
 git branch -a
 
 echo "[+] Checking if $TARGET_BRANCH exist"
-if git checkout -b $TARGET_BRANCH
+if git checkout $TARGET_BRANCH
 then 
 	echo "$TARGET_BRANCH exist"
 	WORKING_BRANCH="$TARGET_BRANCH-2" 
