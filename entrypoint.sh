@@ -6,18 +6,21 @@ set -u  # script fails if trying to access to an undefined variable
 set -x
 
 echo "[+] Action start"
-SOURCE_DIRECTORY="${1}"
-DESTINATION_GITHUB_USERNAME="${2}"
-DESTINATION_REPOSITORY_NAME="${3}"
-GITHUB_SERVER="${4}"
-USER_EMAIL="${5}"
-USER_NAME="${6}"
-DESTINATION_REPOSITORY_USERNAME="${7}"
+USER_NAME="${1}"
+USER_EMAIL="${2}"
+GITHUB_SERVER="${3}"
+SOURCE_DIRECTORY="${4}"
+DESTINATION_GITHUB_USERNAME="${5}"
+DESTINATION_REPOSITORY_USERNAME="${6}"
+DESTINATION_REPOSITORY_NAME="${7}"
 TARGET_BRANCH="${8}"
-COMMIT_MESSAGE="${9}"
+BASE_BRANCH="${9}"
 TARGET_DIRECTORY="${10}"
-BASE_BRANCH="${11}"
+COMMIT_MESSAGE="${11}"
+PR_TITLE="${12}"
 
+
+# -z flag causes test to check whether a string is empty - return true if string is empty 
 if [ -z "$DESTINATION_REPOSITORY_USERNAME" ]
 then
 	DESTINATION_REPOSITORY_USERNAME="$DESTINATION_GITHUB_USERNAME"
@@ -33,6 +36,11 @@ then
   echo "target-branch cannot be 'main' nor 'master'"
   return -1
 fi
+
+if [ -z "$PR_TITLE"]
+then 
+	PR_TITLE="PR-for-$WORKING_BRANCH"
+fi 
 
 # Verify that there (potentially) some access to the destination repository
 # and set up git (with GIT_CMD variable) and GIT_CMD_REPOSITORY
@@ -167,10 +175,7 @@ echo "[+] Pushing git commit"
 git push "$GIT_CMD_REPOSITORY" --set-upstream "$WORKING_BRANCH"
 
 echo "[+] Creating a pull request"
-PR_TITLE="PR-for-$WORKING_BRANCH"
-
 gh pr create --title $PR_TITLE \
             --body "$COMMIT_MESSAGE" \
             --base $BASE_BRANCH \
             --head $WORKING_BRANCH 
-            #    $PULL_REQUEST_REVIEWERS_LIST
