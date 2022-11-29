@@ -176,7 +176,7 @@ echo "[+] Pushing git commit"
 git push "$GIT_CMD_REPOSITORY" --set-upstream "$WORKING_BRANCH"
 
 echo "[+] Creating a pull request"
-if [$PR_DRAFT == true]
+if ["$PR_DRAFT" == true]
 then 
 	gh pr create --title "$PR_TITLE" \
 				--body "$COMMIT_MESSAGE" \
