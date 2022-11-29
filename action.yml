@@ -54,6 +54,11 @@ inputs:
       [Optional] Title for the created pull request 
     default: Update from submodule 
     required: false 
+  draft-pull-request: 
+    description: >- 
+      [Optional] Set to true if pull request should be marked as a draft 
+    default: false 
+    required: false 
 
   
         
@@ -73,6 +78,7 @@ runs:
     - '${{ inputs.target-directory }}'
     - '${{ inputs.commit-message }}'
     - '${{ inputs.pull-request-title }}'
+    - '${{ inputs.draft-pull-request }}'
 branding:
   icon: git-commit
   color: green

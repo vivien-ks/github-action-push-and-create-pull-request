@@ -18,6 +18,7 @@ BASE_BRANCH="${9}"
 TARGET_DIRECTORY="${10}"
 COMMIT_MESSAGE="${11}"
 PR_TITLE="${12}"
+PR_DRAFT="${13}"
 
 
 # -z flag causes test to check whether a string is empty - return true if string is empty 
@@ -175,8 +176,16 @@ echo "[+] Pushing git commit"
 git push "$GIT_CMD_REPOSITORY" --set-upstream "$WORKING_BRANCH"
 
 echo "[+] Creating a pull request"
-gh pr create --title "$PR_TITLE" \
-            --body "$COMMIT_MESSAGE" \
-            --base $BASE_BRANCH \
-            --head $WORKING_BRANCH \
-			--draft
+if [$PR_DRAFT == true]
+then 
+	gh pr create --title "$PR_TITLE" \
+				--body "$COMMIT_MESSAGE" \
+				--base $BASE_BRANCH \
+				--head $WORKING_BRANCH \
+				--draft
+else 
+	gh pr create --title "$PR_TITLE" \
+				--body "$COMMIT_MESSAGE" \
+				--base $BASE_BRANCH \
+				--head $WORKING_BRANCH 
+fi 
