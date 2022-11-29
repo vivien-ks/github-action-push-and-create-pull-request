@@ -178,5 +178,5 @@ echo "[+] Creating a pull request"
 gh pr create --title "$PR_TITLE" \
             --body "$COMMIT_MESSAGE" \
             --base $BASE_BRANCH \
-            --head $WORKING_BRANCH 
+            --head $WORKING_BRANCH \
 			--draft
